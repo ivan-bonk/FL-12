@@ -1,1 +1,258 @@
-// Write your styles here
+@mixin underline($color, $width, $height, $left, $bottom) {
+    position: relative;
+    z-index: 1;
+
+    &:after{
+        content: '';
+        position: absolute;
+        background-color: $color;
+        z-index: -1;
+        width: $width;
+        height: $height;
+        left: $left;
+        bottom: $bottom;
+    }
+}
+
+@mixin button($color) {
+    background-color: $color;
+    height: 35px;
+    width: 110px;
+    font-weight: 600;
+    color: white;
+    border: none;
+    border-radius: 3%;
+    
+    &:hover {
+        background-color: $buttonHoverColor;
+        cursor: pointer;
+    }
+}
+
+@mixin landingLogo($color, $font) {
+    display: flex;
+    align-items: center;
+
+    img {
+        height: 45px;
+        width: 45px;
+    }
+
+    p {
+        @include fontWeights("medium");
+        font-size: $logoNameFZ;
+        width: 80px;
+        text-align: center;
+        color: $color;
+        font-family: $font;
+
+        span {
+            display: block;
+            font-size: $logoSpanFZ;
+        }
+    }
+}
+
+@mixin link ($size, $color) {
+    color: $color;
+    font-size: $size;
+    &:hover {
+        cursor: pointer;
+        color: #e2e2e2;
+    }
+}
+
+$fontWeights: ("regular": 400, "medium": 600, "bold": 700);
+@mixin fontWeights($weight) {
+  font-weight: map-get($fontWeights, $weight);
+}
+
+%borderRad {
+    border-radius: 5px;
+  }
+
+%flexPos {
+    display: flex;
+    align-items: center;
+}
+
+body {
+    font-family: $mainFont;
+    color: $baseFontColor;
+    background-color: $bgColor;
+    padding: 0;
+    margin: 0;
+}
+
+.header {
+    height: $headerHeight;
+    background-image: $bg;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-y: center;
+    border-radius: 0 0 50% 0;
+
+    .header-wrap {
+        margin-left: 10%;
+        width: $headerWrapWidth;
+
+        .landing-logo {
+            @include landingLogo($baseFontColor, $secondFont);
+        }
+        .header_heading {
+            font-size: $headerHeadingFZ;
+            font-weight: bold;
+            line-height: 55px;
+            margin-top: 20px;
+            
+            @include underline($underlineColor, 232px, 36px, 0, 2px);
+        }
+        .header_text {
+            font-family: $secondFont;
+            font-size: $headerTextFZ;
+            line-height: $lineHeight;
+            margin-bottom: 50px;
+        }
+
+        .header_button {
+            @include button($buttonColor);
+        }
+        .login {
+            @include link($headerLinkFZ, white);
+            margin-left: 120px;
+        }
+    }
+}
+
+main {
+    @extend %flexPos;
+    flex-direction: column;
+   
+
+    .section_text {
+        font-size: $sectionTextFZ;
+        color: $baseFontColor;
+
+        @include fontWeights('medium');
+
+        @include underline($underlineColor, 158px, 40px, 180px, 7px);
+        
+    }
+
+    .section_card_wrap{
+        display: flex;
+        flex-direction: column;
+
+        .section_card{
+            @extend %flexPos;
+            justify-content: space-between;
+            box-sizing: border-box;
+            width: $sectionCardWidth;
+            height: $sectionCardHeight;
+            background-color: $blockBgColor;
+            padding: 15px;
+            margin: 8px;
+
+            @extend %borderRad;
+            img {
+                min-width: $sectioncCardImgWidth;
+                @extend %borderRad;
+            }
+
+            .section_card_right_container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-around;
+                padding: 20px 0;
+                margin: 0 auto;
+                box-sizing: border-box;
+                height: inherit;
+                width: 350px;
+
+                .section_card_heading {
+                    color: white;
+                    font-size: $sectionCardHeadingFZ;
+    
+                    @include fontWeights("bold");
+                }
+                .section_card_text {
+                    font-family: $secondFont;
+                    font-size: $sectionCardTextFZ;
+                    line-height: $lineHeight;
+                    color: $fontColor;
+                    margin: 0 0 8px 0;
+                    text-align: justify;
+                }
+
+                .section_link {
+                    @include link($sectionCardTextFZ, $fontColor);
+                }
+            }
+        }
+    }
+
+    .section_banner {
+        @extend %flexPos;
+
+        justify-content: space-around;
+        width: $sectionBannerWidth;
+        padding: 2.3%;
+        background: $gradientColor;
+
+        @extend %borderRad;
+
+        margin-top: 100px;
+        margin-bottom: -60px;
+        
+
+        .section_banner_heading {
+            color: $baseFontColor;
+            font-size: $sectionBannerHeadFZ;
+            @include fontWeights("bold");   
+            margin-bottom: 10px; 
+            margin: 0;    
+            @include underline($underlineColor, 55px, 40px, 100px, 0);
+        }
+
+        .section_banner_text {
+            color: $fontColor;
+            font-family: $secondFont;
+            font-size: $sectionCardTextFZ;
+            @include fontWeights("regular");
+            margin: 10px 0 0 0;
+        }
+
+        button {
+            @include button($buttonColor);
+        }
+        
+    }
+}
+
+.footer {
+    &-wrap {
+        @extend %flexPos;
+        justify-content: space-around;
+        width: 100%;
+        height: $footerHeight;
+        background-color: $blockBgColor;
+        font-family: $secondFont;
+        color: $fontColor;
+        padding-top: 60px;
+
+        .footer_logo {
+            @include landingLogo($fontColor, $secondFont);
+        }
+
+        .footer_text {
+            width: 240px;
+            font-size: $footerTextFZ;
+            line-height: $lineHeight;
+        }
+
+        .footer-cr {
+            font-size: $footerCrFZ;
+        }
+    }
+}
