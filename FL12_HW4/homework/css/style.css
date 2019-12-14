@@ -1,0 +1,175 @@
+html, body, header, main, div, span, section {
+    padding: 0;
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 80px;
+    width: 100%;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+}
+
+.header .header_name a{
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    color: #777;
+}
+.header .main_nav .nav_item{
+    text-decoration: none;
+    color: #777;
+    font-size: 16px;
+    margin: 20px;
+}
+
+.header .main_nav .nav_item:hover {
+    color: #bfba55;
+}
+
+.main {
+    margin-top: 80px;
+}
+
+.greeting_wrap {
+    background-image: url(../img/home-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-x: center;
+}
+
+.greeting {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 750px;
+    width: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.greeting .greet_title {
+    font-size: 64px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.greeting .greet_text {
+    color: #bfba55;
+}
+.greeting .greet_btn {
+    height: 37px;
+    width: 130px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 20px;
+    background-color: white;
+    color: #777;
+    border: none;
+    margin-top: 30px;
+}
+
+.greeting .greet_btn:hover {
+    cursor: pointer;
+    background-color: #bfba55;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px 0 50px 0;
+}
+
+hr {
+    border: 0.5px solid #f0f0f0;
+    width: 845px;
+}
+
+.blog_item {
+    width: 845px;
+    margin: 75px 0 50px 0;
+}
+.blog_item .blog_title {
+    font-size: 27px;
+    margin-bottom: 10px;
+}
+.blog_item .blog_pic {
+    max-width: 845px;
+}
+.blog_item  .author_pic{
+    max-width: 40px;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+.blog_author {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.author {
+    display: flex;
+    align-items: center;
+}
+
+.author, .blog_date, .blog_comments {
+    margin-right: 20px;
+}
+
+.blog_text {
+    color: #777;
+    line-height: 22px;
+}
+.blog_btn {
+    border: 1px solid #777;
+    margin-top: 20px;
+    height: 40px;
+    width: 160px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 20px;
+    background-color: white;
+    color: #777;
+}
+.blog_btn:hover {
+    background-color: #e6e4e4;
+}
+
+.footer {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+}
+.footer_wrap {
+    width: 845px;
+    height: 200px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+}
+.left_block {
+    width: 362px;
+}
+.left_title, .right_title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.left_text, .left_copy, .address, .number, .email{
+    font-size: 14px;
+    color: #777;
+    line-height: 22px;
+    margin: 10px 0;
+}
+.left_copy {
+    margin-top: 20px;
+}
