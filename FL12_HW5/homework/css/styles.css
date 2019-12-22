@@ -1,35 +1,13 @@
 
-body, header, main, footer, div, section, p, h2, a, aside, nav {
+html, body, header, main, footer, div, section, p, h2, a, aside, nav {
   padding: 0;
   margin: 0;
-}
-.post-1 {
-	background: #9d27b0;
-}
-.post-2 {
-	background: #9bb800;
-}
-.post-3 {
-	background: #ed5120;
-}
-.post-4 {
-	background: #9d27b0;
-}
-.post-5 {
-	background: #2d95bb;
 }
 body {
   color: #fff;
-  margin: 0;
-  padding: 0;
   background-color: #0b192f;
   font-family: roboto;
   font-weight: 200;
-}
-
-html, p {
-  padding: 0;
-  margin: 0;
 }
 
 .wrapper {
