@@ -10,7 +10,9 @@ function Fighter(obj) {
         loss = 0;
 
     function attack(defender) {
-        if(Math.random() * HNDRT >= defender.getAgility() + defender.getStrength()){
+        const chance = defender.getAgility() + defender.getStrength() >= HNDRT ? 
+            HNDRT : defender.getAgility() + defender.getStrength();
+        if(Math.random() * HNDRT >= chance){
             defender.dealDamage(this.getDamage());
             console.log(`${this.getName()} makes ${this.getDamage()} damage to ${defender.getName()}`);
         } else {
@@ -70,4 +72,3 @@ function battle(fighter1, fighter2) {
         }
     }
 }
-
