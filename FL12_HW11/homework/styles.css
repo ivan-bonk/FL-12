@@ -1,0 +1,32 @@
+.folder {
+    color: #edbc0b;
+    font-size: 17px;
+}
+.file {
+    color: #cccbcb;
+}
+.open, .file {
+    display: flex;
+    align-items: center;
+}
+.open:hover, .file:hover {
+    background-color: #0000000a;
+    cursor: pointer;
+}
+
+.folder span {
+    color: black;
+}
+.subFolderStyles {
+    padding-left: 13px;
+}
+
+.empty {
+    color: black;
+    font-style: italic;
+    margin-left: -5px;
+}
+
+.subFolder {
+    display: none;
+}
