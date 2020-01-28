@@ -8,6 +8,7 @@ function Page() {
     const mainPage = document.createElement('div');
     const addNew = document.createElement('button');
     const setBlock = document.createElement('div');
+    const learnedBlock = document.createElement('div');
 
     const addPage = document.createElement('div');
     const titleInput = document.createElement('input');
@@ -21,6 +22,7 @@ function Page() {
     const modAddTerm = document.createElement('button');
     const saveBtn = document.createElement('button');
     const modCancelBtn = document.createElement('button');
+    const modTerms = document.createElement('div');
 
     addNew.textContent = 'Add new';
     confirmBtn.textContent = 'Confirm';
@@ -31,16 +33,19 @@ function Page() {
     modCancelBtn.textContent = 'Cancel';
 
     mainPage.classList.add('main_page');
+    addNew.classList.add('add_new');
     addPage.classList.add('add_page');
     addPage.classList.add('open');
     setBlock.classList.add('set_block');
     terms.classList.add('terms');
     modifyPage.classList.add('modify_page');
     modifyPage.classList.add('open');
+    modTerms.classList.add('mod_terms');
 
 
     mainPage.append(addNew);
     mainPage.append(setBlock);
+    mainPage.append(learnedBlock);
     addPage.append(titleInput);
     addPage.append(addTerm);
     addPage.append(confirmBtn);
@@ -50,6 +55,7 @@ function Page() {
     modifyPage.append(modAddTerm);
     modifyPage.append(saveBtn);
     modifyPage.append(modCancelBtn);
+    modifyPage.append(modTerms);
 
     rootNode.append(mainPage);
     rootNode.append(addPage);
@@ -59,61 +65,61 @@ function Page() {
         drawSet();
     }
 
-    addNew.addEventListener('click', function() {
+    addNew.addEventListener('click', () => {
         window.location.hash = 'add';
     });
 
-    cancelBtn.addEventListener('click', function() {
+    cancelBtn.addEventListener('click', () => {
         window.location.hash = 'main';
     });
 
-    modCancelBtn.addEventListener('click', function() {
+    modCancelBtn.addEventListener('click', () => {
         window.location.hash = 'main';
     });
 
-    confirmBtn.addEventListener('click', function() {
-        if(titleInput.value){
+    function saveNewSet(title, place, flag){
+        if(title.value){
             let buff = new Array();
-            buff.push(`${titleInput.value}+`);
-            const terms = document.querySelector('.terms').childNodes;
+            buff.push(`${title.value}+`);
+            const terms = document.querySelector(`.${place.getAttribute('class')}`).childNodes;
             
-            if(terms.length > 1) {
-                terms.forEach((item) => {
-                    if(item.firstChild.value || item.firstChild.nextSibling.value) {
-                        buff.push(`${item.firstChild.value}+`);
-                        buff.push(`${item.firstChild.nextSibling.value}+`);
-                    }else {
-                        alert('You should fill the gaps');
-                    }
-                });
-            } else {
-                buff.push(`${terms[ZERO].firstChild.value}+`);
-                buff.push(`${terms[ZERO].firstChild.nextSibling.value}+`);
-            }
+            terms.forEach((item) => {
+                if(item.firstChild.value || item.firstChild.nextSibling.value) {
+                    buff.push(`${item.firstChild.value}+`);
+                    buff.push(`${item.firstChild.nextSibling.value}+`);
+                }else {
+                    alert('You should fill the gaps');
+                }
+            });
             
             buff = buff.join('');
-            const index = document.querySelector('.set_block').childNodes.length;
-            localStorage.setItem(index, buff.slice(ZERO, buff.length-1));
-
-            renderSet(index);
+            let index = document.querySelector('.set_block');
+            if(flag) {
+                index = index.lastChild === null ? ZERO : +index.lastChild.getAttribute('id').substring(FIVE);
+                localStorage.setItem(index, buff.slice(ZERO, buff.length-1));
+            } else {
+                index = window.location.hash.substring(EIGHT);
+                localStorage.removeItem(+index.substring(FIVE) - 1);
+                localStorage.setItem(+index.substring(FIVE) - 1, buff.slice(ZERO, buff.length-1));
+            }
+            
             window.location.hash = 'main';
+            return index;            
         } else {
-            alert('You should fill Term');
+            alert('You should fill Name');
+            return false;
         }
+    }
+
+    confirmBtn.addEventListener('click', () => {
+        renderSet(saveNewSet(titleInput, terms, true));
     });
 
-    // saveBtn.addEventListener('click', function() {
-    //     if(modTitleInput.value) {
-    //         const paste = document.querySelector(`#${window.location.hash.substring(EIGHT)}`);
-    //         paste.firstChild.textContent = modTitleInput.value;
-    //         paste.firstChild.nextSibling.textContent = modDefInput.value;
-    //         window.location.hash = 'main';
-    //     }else {
-    //         alert('You should fill Term');
-    //     }
-    // });
+    saveBtn.addEventListener('click', () => {
+        saveChanges(saveNewSet(modTitleInput, modTerms, false));
+    });
 
-    addTerm.addEventListener('click', function() {
+    function termAdder(place){
         const block = document.createElement('div');
         const term = document.createElement('input');
         const def = document.createElement('input');
@@ -127,20 +133,29 @@ function Page() {
         block.append(term);
         block.append(def);
         block.append(removeTerm);
-        terms.append(block);
+        place.append(block);
 
-        removeTerm.addEventListener('click', function(event) {
+        removeTerm.addEventListener('click', (event) => {
             const target = event.target.parentNode;
-            let elem = target.firstChild;
-            while (elem){
-                target.removeChild(elem);
-                elem = target.firstChild;
-            }
+            target.setAttribute('id', 'delete');
+            const parent = target.parentNode;
+
+            parent.removeChild(target);
         });
-    });
+
+        return {term, def};
+    }
+    
+    addTerm.addEventListener('click', () => {
+        termAdder(terms);
+    }, false);
+    modAddTerm.addEventListener('click', () => {
+        termAdder(modTerms);
+    }, false);
+    
 
     function openAddPage() {
-        clearInput();
+        clearInput(titleInput, terms);
         mainPage.classList.toggle('open');
         addPage.classList.toggle('open');
     }
@@ -167,64 +182,111 @@ function Page() {
             const target = event.target;
             const parent = target.parentNode.parentNode;
 
-            let index = target.parentNode.getAttribute('id').substring(FIVE)*TWO-TWO;
+            let index = target.parentNode.getAttribute('id').substring(FIVE)-1;
             localStorage.removeItem(index);
-            localStorage.removeItem(index+1);
             parent.removeChild(target.parentNode);
         });
     }
 
-    // function editListener(item){
+    function editListener(item){
+        item.addEventListener('click', (event) => {
+            clearInput(modTitleInput, modTerms);
+            const target = event.target.parentNode;
+            const id = +target.getAttribute('id').substring(FIVE);
+            modTitleInput.value = target.firstChild.textContent;
+
+            const buff = localStorage.getItem(id-1).split('+');
+
+            if(buff.length > 1) {
+                for(let i = 1; i < buff.length; i += TWO) {
+                    const termObj = termAdder(modTerms);
+
+                    termObj.term.value = `${buff[i]}`;
+                    termObj.def.value = `${buff[i+1]}`;
+                }
+            }
+            window.location.hash = `modify/item-${id}`;
+        });
+    }
+
+    // function markListener(item) {
     //     item.addEventListener('click', (event) => {
     //         const target = event.target.parentNode;
-    //         const id = target.getAttribute('id');
-    //         modTitleInput.value = target.firstChild.textContent;
-    //         modDefInput.value = target.firstChild.nextSibling.textContent;
-    //         window.location.hash = 'modify/' + id;
+    //         learnedBlock.insertAdjacentElement('beforeend', target);
+    //         const index = target.getAttribute('id').substring(FIVE)-1;
+    //         let buff = localStorage.getItem(index);
+    //         buff = buff.split('+');
+    //         buff.push('Learned');
+    //         buff = buff.join('+');
+    //         localStorage.removeItem(index);
+    //         localStorage.setItem(index, buff);
+    //         removeLearned(target);
+    //     },{once : true});
+    // }
+
+    // function removeLearned(item) {
+    //     item.addEventListener('click', (event) => {
+    //         const target = event.target.parentNode;
+    //         setBlock.insertAdjacentElement('beforeend', target);
+    //         const index = target.getAttribute('id').substring(FIVE)-1;
+    //         let buff = localStorage.getItem(index);
+    //         buff = buff.split('+');
+    //         buff.pop();
+    //         buff = buff.join('+');
+    //         localStorage.removeItem(index);
+    //         localStorage.setItem(index, buff);
     //     });
     // }
 
     function renderSet(id) {
-        const setItem = document.createElement('div');
-        const setTitle = document.createElement('span');
-        const removeBtn = document.createElement('button');
-        const editBtn = document.createElement('button');
+        if(id !== false) {
+            const setItem = document.createElement('div');
+            const setTitle = document.createElement('span');
+            const removeBtn = document.createElement('button');
+            const editBtn = document.createElement('button');
 
-        let buff = localStorage.getItem(id);
+            let buff = localStorage.getItem(id);
 
-        buff = buff.split('+');
-        setTitle.textContent = buff[ZERO];
-        removeBtn.textContent = 'Remove';
-        editBtn.textContent = 'Edit';
+            buff = buff.split('+');
+            setTitle.textContent = buff[ZERO];
+            removeBtn.textContent = 'Remove';
+            editBtn.textContent = 'Edit';
 
-        setItem.setAttribute('id', 'item-'+(id+TWO)/TWO);
-        removeBtn.classList.add('remove_btn');
-        editBtn.classList.add('edit_btn');
+            setItem.setAttribute('id', 'item-'+(id+1));
 
-        setItem.append(setTitle);
-        setItem.append(removeBtn);
-        setItem.append(editBtn);
-        setBlock.append(setItem);
-        removeListener(removeBtn);
-        // editListener(editBtn);
+            setItem.append(setTitle);
+            setItem.append(removeBtn);
+            setItem.append(editBtn);
+            setBlock.append(setItem);
+            removeListener(removeBtn);
+            editListener(editBtn);
+            // markListener(setItem);  
+        }
+    }
+
+    function saveChanges(index){
+        const block = document.getElementById(index);
+        const buff = localStorage.getItem(+index.substring(FIVE) - 1).split('+');
+
+        block.firstChild.textContent = buff[ZERO];
+
     }
 
     function drawSet() {
         let keys = Object.keys(localStorage);
         let max = Math.max(...keys);
-        for(let i = 0; i < max; i++) {
+        for(let i = 0; i <= max; i++) {
             if(localStorage.getItem(i) !== null) {
-                renderSet(localStorage.getItem(i), localStorage.getItem(i+1), i);
-                i++;
+                renderSet(i);
             } else {
                 continue;
             }
         }
     }
 
-    function clearInput() {
-        titleInput.value = '';
-        const terms = document.querySelector('.terms');
+    function clearInput(title, place) {
+        title.value = '';
+        const terms = document.querySelector(`.${place.getAttribute('class')}`);
         let elem = terms.firstChild;
         while (elem) {
             terms.removeChild(elem);
