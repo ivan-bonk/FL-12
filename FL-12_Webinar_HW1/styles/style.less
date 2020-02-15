@@ -1,0 +1,137 @@
+@import "variables.less";
+
+
+.navbar-light, .navbar {
+
+    padding: 0 8vw;
+    border-bottom: 1px solid rgb(224, 224, 224);
+
+    .navbar-nav {
+        .active>.nav-link {
+            background-color: @blue;
+            color: white;
+            padding-left: 1rem;
+            padding-right: 1rem;
+
+            &:hover {
+                cursor: pointer;
+                color: #666;
+            }
+        }
+
+        .nav-link {
+            color: @grey;
+            padding: 1rem 1rem;
+
+            &:hover{
+                cursor: pointer;
+                background-color: @blue;
+                color: white;
+            }
+        }
+    }
+}
+
+.main {
+    font-size: 18px;
+    padding: 0 8vw;
+
+    &__title {
+        padding-top: 1.5rem;
+        border-bottom: 1.5px solid @blue;
+        color: @blue;
+    }
+
+    &__content {
+        margin-top: 1.5rem;
+    }
+
+    &__img img{
+        width: inherit;
+        padding: 0;
+    }
+    &__desc--title {
+        color: @blue;
+    }
+
+}
+
+.classes {
+    padding: 2rem 8vw;
+
+    &__title {
+        color: @blue;
+        border-bottom: 1.5px solid @blue;
+        margin-bottom: 2rem;
+    }
+
+    &__item {
+        display: grid;
+        margin: 0 -1.5rem;
+        grid-template-columns: 1fr 1fr 1fr 1fr ;
+
+        div {
+            padding: 2px;
+            margin: .5rem 1.5rem;
+            width: 85%;
+            
+            p {
+                color: white;
+                text-align: center;
+                margin: 7px 0;
+            }
+        }
+        img {
+            width: 100%;
+        }
+
+        &--red {
+            background-color: @red;
+            grid-column: 1;
+        }
+        &--blue {
+            background-color: @blue;
+            grid-column: 2;
+        }
+        &--orange {
+            background-color: @orange;
+            grid-column: 3;
+        }
+        &--green {
+            background-color: @green;
+            grid-column: 4;
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .classes {
+        &__item {
+            display: grid;
+            margin: 0 -1.5rem;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+    
+            &--red {
+                background-color: @red;
+                grid-column: 1;
+                grid-row: 1;
+            }
+            &--blue {
+                background-color: @blue;
+                grid-column: 2;
+                grid-row: 1;
+            }
+            &--orange {
+                background-color: @orange;
+                grid-column: 1;
+                grid-row: 2;
+            }
+            &--green {
+                background-color: @green;
+                grid-column: 2;
+                grid-row: 2;
+            }
+        }
+    }
+}
