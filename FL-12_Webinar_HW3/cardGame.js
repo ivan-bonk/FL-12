@@ -17,14 +17,27 @@ class Card {
 
     toString() {
         let result = '';
-        if(this.rank >= 1 && this.rank <= 13) {
-            if(this.isFaceCard === true) {
-                switch(this.rank) {
-                    case 1: {result += 'Ace'; break;}
-                    case 11: {result += 'Jack'; break;}
-                    case 12: {result += 'Queen'; break;}
-                    case 13: {result += 'King'; break}
-                    default: break;
+        if (this.rank >= 1 && this.rank <= 13) {
+            if (this.isFaceCard === true) {
+                switch (this.rank) {
+                    case 1: {
+                        result += 'Ace';
+                        break;
+                    }
+                    case 11: {
+                        result += 'Jack';
+                        break;
+                    }
+                    case 12: {
+                        result += 'Queen';
+                        break;
+                    }
+                    case 13: {
+                        result += 'King';
+                        break
+                    }
+                    default:
+                        break;
                 }
             } else {
                 result += this.rank;
@@ -38,9 +51,9 @@ class Card {
     }
 
     static compare(cardOne, cardTwo) {
-        if(cardOne > cardTwo) {
+        if (cardOne > cardTwo) {
             return true;
-        } else if(cardOne < cardTwo) {
+        } else if (cardOne < cardTwo) {
             return false;
         } else {
             return 'equel';
@@ -49,8 +62,8 @@ class Card {
 }
 
 class Deck {
-    constructor(cards) {
-        this.cards = cards;
+    constructor() {
+        this.cards = this.createDeck();
         this[_count] = this.cards.length;
     }
 
@@ -58,11 +71,11 @@ class Deck {
         return this[_count];
     }
 
-    shuffle(){
-        let rand, 
+    shuffle() {
+        let rand,
             temp;
-        for(let i = this.cards.length - 1; i > 0; i--) {
-            rand = Math.floor(Math.random()*(i + 1));
+        for (let i = this.cards.length - 1; i > 0; i--) {
+            rand = Math.floor(Math.random() * (i + 1));
             temp = this.cards[rand];
             this.cards[rand] = this.cards[i];
             this.cards[i] = temp;
@@ -71,33 +84,36 @@ class Deck {
 
     draw(n = 1) {
         let result = [];
-        for(let i = 0; i < n; i++) {
-            result.push(this.cards[this.cards.length-(i+1)]);
+        for (let i = 0; i < n; i++) {
+            result.push(this.cards[this.cards.length - (i + 1)]);
         }
-        this.cards.splice(this.cards.length-n, n);
+        this.cards.splice(this.cards.length - n, n);
         this[_count] = this.cards.length;
 
         return result;
     }
-}
 
-function createDeck() {
-    let deck = [],
-        suit = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-    
-    suit.forEach((sign) => {
-        for(let i = 1; i < 14; i++) {
-            deck.push(new Card(sign, i));
-        }
-    });
-    return deck;
+    // Function which create deck of Cards and return this Array
+    // Used when we initialize property 'cards'
+
+    createDeck() {
+        let deck = [],
+            suit = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+
+        suit.forEach((sign) => {
+            for (let i = 1; i < 14; i++) {
+                deck.push(new Card(sign, i));
+            }
+        });
+        return deck;
+    }
 }
 
 class Player {
-    constructor(name, deck){
+    constructor(name) {
         this.name = name;
         this[_wins] = 0;
-        this.deck = deck;
+        this.deck = new Deck();
     }
 
     get wins() {
@@ -105,34 +121,51 @@ class Player {
     }
 
     static play(playerOne, playerTwo) {
-        if(playerOne.deck.cards.length === 52 && playerTwo.deck.cards.length === 52) {
+        if (playerOne.deck.cards.length === 52 && playerTwo.deck.cards.length === 52) {
+
             playerOne.deck.shuffle();
             playerTwo.deck.shuffle();
 
-            while(playerOne.deck.count && playerTwo.deck.count) {
+            while (playerOne.deck.count && playerTwo.deck.count) {
                 const cardOne = playerOne.deck.draw();
                 const cardTwo = playerTwo.deck.draw();
 
-                switch(Card.compare(cardOne, cardTwo)) {
-                    case true: playerOne[_wins]++; break;
-                    case false: playerTwo[_wins]++; break;
-                    case 'equel': break;
+                switch (Card.compare(cardOne, cardTwo)) {
+                    case true:
+                        playerOne[_wins]++;
+                        break;
+                    case false:
+                        playerTwo[_wins]++;
+                        break;
+                    case 'equel':
+                        break;
                 }
             }
 
-            if(playerOne.wins > playerTwo.wins) {
+            if (playerOne.wins > playerTwo.wins) {
                 console.log(`${playerOne.name} wins ${playerOne.wins} to ${playerTwo.wins}`);
-            } else if(playerOne.wins < playerTwo.wins) {
+            } else if (playerOne.wins < playerTwo.wins) {
                 console.log(`${playerTwo.name} wins ${playerTwo.wins} to ${playerOne.wins}`);
             } else {
                 console.log('A Draw');
             }
 
+            Player.refreshGame(playerOne, playerTwo);
+
         } else {
             console.error('Decks is not full');
         }
     }
+
+    static refreshGame(playerOne, playerTwo) {
+        playerOne.deck = new Deck();
+        playerTwo.deck = new Deck();
+        playerOne[_wins] = 0;
+        playerTwo[_wins] = 0;
+    }
 }
 
-// const playerOne = new Player('Ivan', new Deck(createDeck()));
-// const playerTwo = new Player('Vasyl', new Deck(createDeck()));
+// const playerOne = new Player('Ivan');
+// const playerTwo = new Player('Vasyl');
+
+// Player.play(playerOne, playerTwo);
