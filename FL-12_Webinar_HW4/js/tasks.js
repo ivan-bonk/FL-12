@@ -86,3 +86,28 @@ function add(...params) {
 console.log(add(1,2,3,4,5));
 
 // task 8  ///////////////////////
+
+function getNamesPromise() {
+    fetch('https://api.github.com/users/ivanbonk/repos')
+    .then(response => response.json())
+    .then(info => info.map(el => el.name).sort())
+    .then(list => console.log(list))
+    .catch(error => console.error(error));
+}
+
+getNamesPromise();
+
+// task 9 /////////////////////////
+
+async function getNamesAwait() {
+    try{
+        const response = await fetch('https://api.github.com/users/ivanbonk/repos');
+        const info = await response.json();
+        console.log(info.map(el => el.name).sort());
+    }
+    catch (error){
+        console.error(error);
+    }
+}
+getNamesAwait()
+
