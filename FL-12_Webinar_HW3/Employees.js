@@ -1,8 +1,3 @@
-// Symbols for ReadOnly properties 
-const _age = Symbol('age');
-const _fullName = Symbol('fullName');
-const _managedEmployees = Symbol('managedEmployees');
-
 class Employee {
     constructor(info) {
         this.id = info.id;
@@ -12,25 +7,18 @@ class Employee {
         this.salary = info.birthday;
         this.position = info.position;
         this.department = info.department;
-        this[_age] = this.countAge(this.birthday);
-        this[_fullName] = `${this.firstName} ${this.lastName}`;
-        Employee.EMPLOYEES.push(this);
+        Employee._EMPLOYEES.push(this);
     }
 
-   static EMPLOYEES = [];
+   static _EMPLOYEES = [];
+
+   static get EMPLOYEES() {
+       return this._EMPLOYEES;
+   }
     
     get age() {
-        return this[_age];
-    }
-
-
-    get fullName() {
-        return this[_fullName];
-    }
-
-    countAge(birth) { 
         const today = new Date();
-        const birthDate = birth.split('/');
+        const birthDate = this.birthday.split('/');
         let age = today.getFullYear() - birthDate[2];
         const month = today.getMonth() - birthDate[1];
         if(month < 0 || (month === 0 && today.getDay() < birthDate[0] )){
@@ -39,8 +27,12 @@ class Employee {
         return age;
     }
 
+    get fullName() {
+        return `${this.firstName} ${this.lastName}`;
+    }
+
     quit() {
-        Employee.EMPLOYEES.splice(Employee.EMPLOYEES.indexOf(this), 1);
+        Employee._EMPLOYEES.splice(Employee._EMPLOYEES.indexOf(this), 1);
     }
 
     retire() {
@@ -85,6 +77,8 @@ class Employee {
         if(actrion.hasOwnProperty('department')) {
             this.changePosition(actrion.department);
             console.log(word);
+        } else {
+            console.log('Something went wrong');
         }
     }
 }
@@ -93,21 +87,16 @@ class Manager extends Employee{
     constructor(info){
         super(info);
         this.position = 'manager';
-        this[_managedEmployees] = this.findManagedEmpl();
     }
 
     get managedEmployees() {
-        return this[_managedEmployees];
-    }
-
-    findManagedEmpl() {   // not so good variant
-        let listOfEmpl = [];
-        for(let emp of Employee.EMPLOYEES) {
-            if(emp.department === this.department && emp.position !== this.position) {
-                listOfEmpl.push(emp);
+        let list = [];
+        Employee._EMPLOYEES.forEach((emp) => {
+            if(emp.department === this.department && emp.position !== 'manager'){
+                list.push(emp);
             }
-        }
-        return listOfEmpl;
+        })
+        return list;
     }
 }
 
@@ -128,21 +117,46 @@ class SalesManager extends Manager {
     }
 }
 
-function managerPro(manager, promoution) {
-    if(manager instanceof Manager) {
-        Object.assign(manager, promoution());
+function ManagerPro(manager, ability) {
+    if (manager instanceof Manager) {
+        return Object.assign(manager, ability());
     }
 }
 
-function promoter() {
-    function promote(empIndex, salary) {
-        this[_managedEmployees][empIndex].salary = salary;
-        console.log(Yoohooo);
+const promoter = () => ({
+    promote(id, salary) {
+        if(this.managedEmployees[id]) {
+            this.managedEmployees[id].changeSalary(salary);
+        }
+    },
+    raise(id, position) {
+        if(this.managedEmployees()[id]) {
+            this.managedEmployees()[id].changePosition(position);
+        }
+    },
+    redirect(id, department) {
+        if(this.managedEmployees()[id]) {
+            this.managedEmployees()[id].changeDepartment(department);
+        }
+    },
+    toFired(id) {
+        if(this.managedEmployees()[id]){
+            this.managedEmployees()[id].getFired();
+        }
+    },
+    toRetire(id) {
+        if(this.managedEmployees()[id]){
+            this.managedEmployees()[id].retire();
+        }
+    },
+    name(id) {
+        if(this.managedEmployees[id]){
+            return this.managedEmployees[id].fullName; 
+        }
     }
-    return {
-        promote
-    }
-}
+});
+
+
 
 
 const salesManager = new SalesManager({
@@ -153,15 +167,7 @@ const salesManager = new SalesManager({
     salary: 5000
 });
 
-const blueCollarWorkerOne = new BlueCollarWorker({
-    id: 3,
-    firstName: 'Mary',
-    lastName: 'Doe',
-    birthday: '12/02/1995',
-    salary: 5000,
-    position: 'office worker',
-    department: 'sales'
-});
+
 const hrManager = new HRManager({
     id: 2,
     firstName: 'Bob',
@@ -178,4 +184,14 @@ const blueCollarWorkerTwo = new BlueCollarWorker({
     salary: 5000,
     position: 'office worker',
     department: 'hr'
+});
+
+const blueCollarWorkerOne = new BlueCollarWorker({
+    id: 3,
+    firstName: 'Mary',
+    lastName: 'Doe',
+    birthday: '12/02/1995',
+    salary: 5000,
+    position: 'office worker',
+    department: 'sales'
 });
