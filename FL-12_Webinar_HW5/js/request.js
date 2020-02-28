@@ -1,15 +1,38 @@
+const loadingDiv = document.getElementById('loading');
 let request = new XMLHttpRequest();
 let userList = [];
 
 request.open('GET', 'https://jsonplaceholder.typicode.com/users', true);
 request.send(null);
 
+showSpinner();
+
 request.onreadystatechange = function() {
+
     if(request.status == 200 && request.readyState === 4) {
         userList = JSON.parse(request.response);
+        hideSpinner();
         const users = new Users(userList);
         users.start();
     }
+}
+
+function getImage(url, callback) {
+    let xml = new XMLHttpRequest();
+    xml.onreadystatechange = function() {
+        if (xml.readyState == 4 && xml.status == 200) {
+        try {
+            var data = JSON.parse(xml.responseText);
+        } catch (error) {
+            console.log(error.message + " in " + xml.responseText);
+            return;
+        }
+        callback(data);
+        }
+    };
+
+    xml.open("GET", url, true);
+    xml.send();
 }
 
 class UserCard {
@@ -27,10 +50,10 @@ class UserCard {
     }
 
     createCard() {
+        const _this = this;
         this.div.id = this.id;
 
         this.div.innerHTML = `
-        <p class="name"><i>Name:</i> ${this.name}</p>
         <p class="username"><i>Username:</i> ${this.username}</p>
         <p class="email"><i>Email:</i> ${this.email}</p>
         <div class="address">
@@ -53,11 +76,32 @@ class UserCard {
             <p class="catchPhrase"><i>Catch phrase:</i> ${this.company.catchPhrase}</p>
             <p class="bs"><i>BS:</i> ${this.company.bs}</p>
         </div>`;
+       
+        const name = document.createElement('p');
+        name.classList.add('name');
+        name.innerHTML = `<i>Name:</i> ${this.name}`;
+        this.div.prepend(name);
+        name.addEventListener('click', this.redirectUser.bind(this));
+
+        getImage('https://api.thecatapi.com/v1/images/search?size=full', function(data) {
+            const img = document.createElement('img');
+            img.src =  data[0]["url"];
+            _this.div.prepend(img);
+        });
+
         const edit = document.createElement('button');
+        const remove = document.createElement('button');
+
         edit.classList.add('edit_btn');
+        remove.classList.add('remove_btn');
+
         edit.innerText = 'Edit';
+        remove.innerText = 'Delete';
+
         this.div.append(edit);
+        this.div.append(remove);
         edit.addEventListener('click', this.editCard.bind(this));
+        remove.addEventListener('click', this.deleteCard.bind(this));
     }
 
     editCard() {
@@ -124,16 +168,23 @@ class UserCard {
             }
         };
 
-        fetch('https://jsonplaceholder.typicode.com/users/' + target.id, {
-            method: 'PUT',
-            body: JSON.stringify(user),
-            headers: {
-            "Content-type": "application/json; charset=UTF-8"
+        const request = new XMLHttpRequest();
+        request.open('PUT', 'https://jsonplaceholder.typicode.com/users/' + target.id, true);
+
+        showSpinner();
+        this.reRender();
+
+        request.onreadystatechange = function() {
+            if(request.status == 200 && request.readyState === 4) {
+                hideSpinner();
+                new UserCard(user).render()
+            }else {
+                hideSpinner();
+                console.error('Error');
             }
-        })
-        .then(this.deleteCard())
-        .then(new UserCard(user).render())
-        .catch(error => console.log(error));
+        }
+
+        request.send(JSON.stringify(user));
     }
 
     render() {
@@ -152,10 +203,46 @@ class UserCard {
         root.append(this.div);
 
     }
-    deleteCard() {
+    reRender() {
         const child = document.getElementById(this.id);
         const parent = child.parentNode;
         parent.removeChild(child);
+    }
+
+    deleteCard() {
+        const request = new XMLHttpRequest();
+        const _this = this;
+        request.open('DELETE', 'https://jsonplaceholder.typicode.com/users/' + this.id, true);
+        showSpinner();
+        request.onreadystatechange = function() {
+            if(request.status == 200 && request.readyState === 4) {
+                _this.reRender();
+                hideSpinner();
+            }
+        }
+        request.send();
+    }
+
+    redirectUser() {
+        
+          
+
+        this.getAll.call(this);
+    }
+
+    async getAll() {
+        showSpinner();
+        const data = await Promise.all([
+          fetch('https://jsonplaceholder.typicode.com/posts').then(response =>
+            response.json()
+          ),
+          fetch('https://jsonplaceholder.typicode.com/comments').then(response =>
+            response.json()
+          ),
+        ]);
+        hideSpinner();
+
+        console.log(data[0].filter(post => post.userId === this.id));
     }
 }
 
@@ -168,5 +255,12 @@ class Users {
     start(){
         this.list.forEach((el) => el.render());
     }
+}
 
+function showSpinner() {
+  loadingDiv.style.visibility = 'visible';
+}
+
+function hideSpinner() {
+  loadingDiv.style.visibility = 'hidden';
 }
