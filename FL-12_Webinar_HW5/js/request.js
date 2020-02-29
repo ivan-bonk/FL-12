@@ -1,38 +1,24 @@
+window.location.hash = '';
 const loadingDiv = document.getElementById('loading');
-let request = new XMLHttpRequest();
-let userList = [];
 
-request.open('GET', 'https://jsonplaceholder.typicode.com/users', true);
-request.send(null);
-
-showSpinner();
-
-request.onreadystatechange = function() {
-
-    if(request.status == 200 && request.readyState === 4) {
-        userList = JSON.parse(request.response);
-        hideSpinner();
-        const users = new Users(userList);
-        users.start();
+function showUsers() {
+    let request = new XMLHttpRequest();
+    let userList = [];
+    
+    request.open('GET', 'https://jsonplaceholder.typicode.com/users', true);
+    request.send(null);
+    
+    showSpinner();
+    
+    request.onreadystatechange = function() {
+    
+        if(request.status == 200 && request.readyState === 4) {
+            userList = JSON.parse(request.response);
+            hideSpinner();
+            const users = new Users(userList);
+            users.start();
+        }
     }
-}
-
-function getImage(url, callback) {
-    let xml = new XMLHttpRequest();
-    xml.onreadystatechange = function() {
-        if (xml.readyState == 4 && xml.status == 200) {
-        try {
-            var data = JSON.parse(xml.responseText);
-        } catch (error) {
-            console.log(error.message + " in " + xml.responseText);
-            return;
-        }
-        callback(data);
-        }
-    };
-
-    xml.open("GET", url, true);
-    xml.send();
 }
 
 class UserCard {
@@ -83,7 +69,7 @@ class UserCard {
         this.div.prepend(name);
         name.addEventListener('click', this.redirectUser.bind(this));
 
-        getImage('https://api.thecatapi.com/v1/images/search?size=full', function(data) {
+        this.getImage('https://api.thecatapi.com/v1/images/search?size=full', function(data) {
             const img = document.createElement('img');
             img.src =  data[0]["url"];
             _this.div.prepend(img);
@@ -172,38 +158,57 @@ class UserCard {
         request.open('PUT', 'https://jsonplaceholder.typicode.com/users/' + target.id, true);
 
         showSpinner();
-        this.reRender();
+        this.removeCard();
 
         request.onreadystatechange = function() {
             if(request.status == 200 && request.readyState === 4) {
                 hideSpinner();
                 new UserCard(user).render()
-            }else {
-                hideSpinner();
-                console.error('Error');
             }
         }
 
         request.send(JSON.stringify(user));
     }
 
+    getImage(url, callback) {
+        let xml = new XMLHttpRequest();
+        xml.onreadystatechange = function() {
+            if (xml.readyState == 4 && xml.status == 200) {
+            try {
+                var data = JSON.parse(xml.responseText);
+            } catch (error) {
+                console.log(error.message + " in " + xml.responseText);
+                return;
+            }
+            callback(data);
+            }
+        };
+    
+        xml.open("GET", url, true);
+        xml.send();
+    }
+
     render() {
         const root = document.querySelector('.root');
         this.createCard();
-        // const cardList = document.getElementsByClassName('user_item');
-        // if(cardList.length > 0){
-        //     for(let el of cardList) {
-        //         if(el.id + 1 === this.id) {
-        //             el.after(this.div);
-        //         }
-        //     }
-        // }else {
-        //     root.append(this.div);
-        // }
-        root.append(this.div);
-
+        const cardList = Array.from(document.querySelectorAll('.user_item'));
+    
+        if(cardList.length > 0){
+            if(this.id === 1) {
+                root.prepend(this.div);
+            }else {
+                for(let el of cardList) {
+                    if(+el.id + 1 === this.id) {
+                        el.after(this.div);
+                    }
+                }
+            }
+            
+        }else {
+            root.append(this.div);
+        }
     }
-    reRender() {
+    removeCard() {
         const child = document.getElementById(this.id);
         const parent = child.parentNode;
         parent.removeChild(child);
@@ -216,33 +221,38 @@ class UserCard {
         showSpinner();
         request.onreadystatechange = function() {
             if(request.status == 200 && request.readyState === 4) {
-                _this.reRender();
+                _this.removeCard();
                 hideSpinner();
             }
         }
         request.send();
     }
 
-    redirectUser() {
+    async redirectUser() {
+        clear();
+        window.location.hash = 'posts';
+        const posts = new PostsList(await this.getPost.call(this), this);
+        posts.create();
         
-          
-
-        this.getAll.call(this);
     }
 
-    async getAll() {
+    async getPost() {
         showSpinner();
-        const data = await Promise.all([
+        return await Promise.all([
           fetch('https://jsonplaceholder.typicode.com/posts').then(response =>
             response.json()
           ),
           fetch('https://jsonplaceholder.typicode.com/comments').then(response =>
             response.json()
-          ),
-        ]);
-        hideSpinner();
-
-        console.log(data[0].filter(post => post.userId === this.id));
+          )
+        ]).then((data) => {
+            const result = data[0].filter(post => post.userId === this.id);
+            result.forEach((el) => {
+                el.comments = data[1].filter(comm => comm.postId === el.id);
+            });
+            hideSpinner();
+            return result;
+        });
     }
 }
 
@@ -254,6 +264,78 @@ class Users {
     }
     start(){
         this.list.forEach((el) => el.render());
+        const root = document.querySelector('.root');
+        root.classList.add('users');
+        root.classList.remove('posts');
+    }
+}
+
+class Post {
+    constructor(post) {
+        this.userId = post.userId,
+        this.id = post.id,
+        this.title = post.title,
+        this.body = post.body,
+        this.comment = post.comments,
+        this.div = document.createElement('div');
+        this.commDiv = document.createElement('div');
+        this.commDiv.classList.add('post_item');
+    }
+
+    createPost() {
+        this.div.id = this.id;
+
+        this.div.innerHTML = `
+            <h2>Post ${this.id}</h2>
+            <h3 class="title">${this.title}</h3>
+            <p class="body">${this.body}</p>`;
+
+        for(let el of this.comment) {
+            this.commDiv.innerHTML += `
+            <div class="comment">
+                <p class="comment_name"><i>Name:</i> ${el.name}</p>
+                <p class="comment_email"><i>Email:</i> ${el.email}</p>
+                <p class="comment_body">${el.body}</p>
+            </div>`;
+        }
+
+        this.div.append(this.commDiv);
+    }
+    render() {
+        const root = document.querySelector('.root');
+        this.createPost();
+        root.append(this.div);
+    }
+}
+
+class PostsList {
+    constructor(list, user) {
+        this.postList = list.map((el) => {
+            return new Post(el);
+        });
+        this.user = user;
+    }
+
+    create() {
+        this.user.render();
+
+        const back = document.createElement('button');
+        back.innerText = 'Back';
+        back.addEventListener('click', this.closePosts.bind(this));
+        const root = document.querySelector('.root');
+        root.append(back);
+        root.classList.remove('users');
+        root.classList.add('posts');
+
+        this.postList.forEach((el) => {
+            el.render();
+        });
+        
+    }
+
+    closePosts() {
+        clear();
+        window.location.hash = 'users';
     }
 }
 
@@ -264,3 +346,20 @@ function showSpinner() {
 function hideSpinner() {
   loadingDiv.style.visibility = 'hidden';
 }
+
+function clear() {
+    const root = document.querySelector('.root');
+    root.innerHTML = '';
+
+}
+window.addEventListener('hashchange', hashControl);
+
+function hashControl() {
+    if(window.location.hash === '#users') {
+        showUsers();
+    }
+}
+
+window.addEventListener('load', () => {
+    window.location.hash = 'users';
+});

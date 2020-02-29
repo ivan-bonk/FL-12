@@ -9,14 +9,28 @@ img {
 
 p {
     padding: 2px 0;
-    height: 20px;
 }
 
-.root {
+.users {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
 }
+
+.posts {
+  padding: 30px;
+}
+
+.post_item {
+  width: 600px;
+}
+
+.comment {
+  margin-left: 40px;
+  border-bottom: 2px dotted blue;
+}
+
+
 .name:hover {
     cursor: pointer;
     background-color: grey;
