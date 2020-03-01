@@ -78,3 +78,20 @@ function markDone(event) {
     }
   }
 }
+
+$($input).keyup(() => {
+  const filter = $($input)[0].value.toUpperCase();
+  const li = $('.item');
+
+  for (let el of li) {
+    let span = el.getElementsByTagName("span")[0];
+    let txtValue = span.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      el.style.display = "";
+    } else {
+      el.style.display = "none";
+    }
+  }
+
+  return false;
+});
