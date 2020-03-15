@@ -1,0 +1,31 @@
+.course-item-span {
+    display: flex;
+    justify-content: space-between;
+    color: gray;
+}
+
+.dots-btn {
+    font-size: 30px;
+    line-height: 3px;
+    color: grey;
+}
+
+.dots-btn:hover {
+    cursor: pointer;
+    color: black;
+}
+
+.item-date {
+    width: 100px;
+}
+.item-title {
+    width: 200px;
+    color: black;
+}
+.item-desc {
+    width: 400px;
+}
+.item-duration {
+    width: 100px;
+}
+

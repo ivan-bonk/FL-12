@@ -1,0 +1,66 @@
+.wrapper {
+    padding: 10px 130px;
+    background-color: white;
+    height: 553px;
+    width: 600px;
+    margin: 50px auto;
+    box-sizing: border-box;
+
+}
+
+.title {
+    text-align: center;
+}
+
+.title-block, .desc-block, .duration-block, .author-block, 
+.right-block {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+}
+input {
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid grey;
+}
+
+textarea {
+    height: 90px;
+    border-radius: 5px;
+    border: 1px solid grey;
+}
+.flex-block {
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+}
+
+.save-btn {
+    color: white;
+    width: 150px;
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    background-color: blue;
+}
+.save-btn:hover {
+    cursor: pointer;
+    border: 2px solid black;
+}
+
+.cancel-btn {
+    color: grey;
+    padding: 5px 20px;
+    margin-left: 40px;
+}
+
+.cancel-btn:hover {
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: grey;
+    color: white;
+}

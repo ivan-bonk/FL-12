@@ -1,0 +1,13 @@
+.add-course-btn {
+    width: 200px;
+    margin-left: 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: blue;
+    color: white;
+}
+
+.add-course-btn:hover {
+    cursor: pointer;
+    border: 1px solid black;
+}
