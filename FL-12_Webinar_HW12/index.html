@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Document</title>
+</head>
+<body>
+  <div class="tabs">
+    <div class="all_employees">All Employees</div>
+    <div class="all_units">All Units</div>
+    <div class="warning_employees">Warning Employees</div>
+  </div>
+  <div class="warning_inputs hide">
+    <select name="performance" id="performance">
+      <option value="top">Top</option>
+      <option value="average">Average</option>
+      <option value="low">Low</option>
+    </select>
+    <button class="perf_btn">Search</button>
+  </div>
+  <div id="root"></div>
+  <script src="./dist/main.js"></script>
+</body>
+</html>
