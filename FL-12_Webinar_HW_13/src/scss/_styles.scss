@@ -1,0 +1,97 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-board {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90px;
+    width: 200px;
+    border: 2px solid $fontDark;
+    border-radius: 10px;
+    position: relative;
+
+    .player-two-header, .player-one-header {
+        position: absolute;
+        width: 150px;
+        color: $fontDark;
+        font-size: 30px;
+        font-weight: bold;
+        padding: 10px;
+    }
+
+    .My-score, .Op-score {
+        font-size: 60px;
+    }
+
+    .player-one-header {
+        left: -180px;
+        top: 18px;
+    }
+    
+    .player-two-header {
+        right: -180px;
+        top: 18px;
+    }
+
+    .active {
+        background-color: $bGColor;
+        color: $fontWhite;
+        border-radius: 10px;
+    }
+  
+    .double-dot {
+        font-size: 45px;
+    }
+
+}
+
+.notice-board {
+    font-size: 45px;
+    margin: 30px;
+}
+
+
+.row {
+    display: flex;
+
+    .board-item {
+        height: 70px;
+        width: 70px;
+        box-sizing: border-box;
+        border: 1px solid $fontDark;
+        font-size: 60px;
+        text-align: center;
+
+        &:hover {
+            background-color: rgb(231, 231, 231);
+        }
+    }
+}
+
+.winner {
+    color: red;
+}
+
+.controlers {
+    margin-top: 40px;
+
+    .new-game-btn, .clear-btn {
+        border-radius: 7px;
+        border: none;
+        background-color: $bGColor;
+        color: $fontWhite;
+        height: 40px;
+        width: 120px;
+        font-size: 17px;
+
+        &:hover {
+            cursor: pointer;
+            background-color: $hoverColor;
+        }
+    }
+}
+
